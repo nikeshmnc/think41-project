@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Customer Support Chatbot</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: auto; }
+    .msg { margin: 5px 0; }
+    .user { color: blue; }
+    .bot { color: green; }
+  </style>
+</head>
+<body>
+  <h2>Customer Support Chatbot</h2>
+  <div id="chat"></div>
+  <input type="text" id="input" placeholder="Ask something..." style="width:80%;">
+  <button onclick="send()">Send</button>
+
+  <script>
+    async function send() {
+      const input = document.getElementById("input");
+      const chat = document.getElementById("chat");
+      const msg = input.value;
+      chat.innerHTML += `<div class="msg user"><b>You:</b> ${msg}</div>`;
+      input.value = "";
+
+      let botReply = "Sorry, I didn't understand.";
+
+      const lowerMsg = msg.toLowerCase();
+
+      // ✅ Top products
+      if (
+        (lowerMsg.includes("top") && lowerMsg.includes("sold")) ||
+        lowerMsg.includes("top-5") ||
+        lowerMsg.includes("top 5") ||
+        lowerMsg.includes("most sold") ||
+        lowerMsg.includes("best sellers")
+      ) {
+        const res = await fetch("http://127.0.0.1:5000/top-products");
+        const data = await res.json();
+        botReply = "Top 5 products:\n" + data.map(p => `- ${p.product_name} (${p.orders_count})`).join("\n");
+      }
+
+      // ✅ Stock check
+      else if (
+        lowerMsg.includes("stock") ||
+        lowerMsg.includes("have") ||
+        lowerMsg.includes("available") ||
+        lowerMsg.includes("in stock")
+      ) {
+        const words = msg.split(" ");
+        const keyword = words.slice(-4).join(" "); // Try last 4 words as product name
+        const res = await fetch(`http://127.0.0.1:5000/stock/${encodeURIComponent(keyword)}`);
+        const data = await res.json();
+        botReply = data.stock
+          ? `${data.product_name} has ${data.stock} units left.`
+          : data.message || "Product not found.";
+      }
+
+      // ✅ Order status
+      else if (lowerMsg.includes("status") && lowerMsg.includes("order")) {
+        const orderId = msg.match(/\d+/); // Extract first number
+        if (orderId) {
+          const res = await fetch(`http://127.0.0.1:5000/order-status/${orderId[0]}`);
+          const data = await res.json();
+          botReply = data.status
+            ? `Order ${orderId[0]} status: ${data.status}`
+            : data.message || "Order not found.";
+        } else {
+          botReply = "Please provide a valid order ID number.";
+        }
+      }
+
+      // ✅ Show reply
+      chat.innerHTML += `<div class="msg bot"><b>Bot:</b> ${botReply.replaceAll("\n", "<br>")}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+    }
+  </script>
+</body>
+</html>
