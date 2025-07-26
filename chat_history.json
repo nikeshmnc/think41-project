@@ -1,0 +1,14 @@
+[
+    {
+        "user": "top-5",
+        "bot": "Here are the top 5 selling products: [example result]"
+    },
+    {
+        "user": "top-5",
+        "bot": "Here are the top 5 selling products: [example result]"
+    },
+    {
+        "user": "top-5",
+        "bot": "Here are the top 5 selling products: [example result]"
+    }
+]

@@ -1,0 +1,14 @@
+You: top-5
+Bot: Top 5 Products:
+1. Wrangler Men's Premium Performance Cowboy Cut Jean (62 orders)
+2. Puma Men's Socks (48 orders)
+3. 7 For All Mankind Men's Standard Classic Straight Leg Jean (41 orders)
+4. True Religion Men's Ricky Straight Jean (37 orders)
+5. Kenneth Cole Men's Straight Leg Jean (36 orders)
+
+You: status of 12345
+Bot: Order 12345 is Cancelled.
+
+You: good
+Bot: Sorry, I didn't understand that.
+
